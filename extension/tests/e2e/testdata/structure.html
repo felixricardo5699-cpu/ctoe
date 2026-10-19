@@ -1,0 +1,29 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>structure preservation</title></head>
+<body>
+<main id="s-main">
+  <h1 id="s-title">Structure preservation test page</h1>
+  <p id="with-inline">Please read the <a id="s-link" href="/docs">official docs</a> and press <b id="s-bold">Send feedback</b> to continue.</p>
+  <p id="with-leading"><b id="s-lead">Breaking</b> news from the open source hardware world today.</p>
+  <p id="with-leading-only"><em id="s-only">Entirely italic sentence about open source boards</em></p>
+  <div id="with-media">Watch the demo <video id="s-video" width="120" height="80" controls></video> and pick a <select id="s-select"><option value="a">Alpha plan</option><option value="b">Beta plan</option></select> for the <input id="s-input" type="text" value="lab bench"> next week.</div>
+  <p id="with-img">The <img id="s-img" src="/sample.png" width="40" height="20" alt="sample banner"> board ships worldwide from the Tindie store.</p>
+  <p id="with-styled">Styled <span id="s-span" class="tag" style="color: rgb(200, 0, 0);">inline span text</span> and <em id="s-em">emphasised words</em> stay intact.</p>
+</main>
+<script>
+  window.__probe = { boldClicks: 0, linkClicks: 0 };
+  document.getElementById('s-bold').addEventListener('click', function () { window.__probe.boldClicks++; });
+  document.getElementById('s-link').addEventListener('click', function (e) { e.preventDefault(); window.__probe.linkClicks++; });
+  window.__refs = {
+    link: document.getElementById('s-link'),
+    bold: document.getElementById('s-bold'),
+    lead: document.getElementById('s-lead'),
+    only: document.getElementById('s-only'),
+    video: document.getElementById('s-video'),
+    select: document.getElementById('s-select'),
+    input: document.getElementById('s-input'),
+    img: document.getElementById('s-img'),
+    span: document.getElementById('s-span'),
+    em: document.getElementById('s-em')
+  };
+</script>
+</body></html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!-- 设置页结构（脚本 dist/options.js）：目标语言、引擎链与自定义接口、正文范围、句级重建、OCR、调试开关 -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>OmniTranslate 万译 · 设置</title>
+<style>
+  body { font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; background:#f8fafc; color:#0f172a; margin:0; padding:28px 16px; }
+  .wrap { max-width:760px; margin:0 auto; }
+  h1 { font-size:20px; display:flex; align-items:center; gap:10px; }
+  .card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:18px 20px; margin:14px 0; }
+  .card h2 { font-size:15px; margin:0 0 12px; }
+  .grid { display:grid; gap:10px; }
+  label { display:flex; justify-content:space-between; align-items:center; gap:14px; font-size:13px; }
+  label span { flex:1; }
+  select, input[type=text], input[type=number], textarea { border:1px solid #cbd5e1; border-radius:8px; padding:7px 9px; font-size:13px; width:260px; background:#fff; color:inherit; }
+  textarea { width:100%; font-family:Consolas,Monaco,monospace; }
+  .chk { justify-content:flex-start; } .chk input { width:auto; }
+  .actions { display:flex; gap:10px; margin-top:16px; }
+  button { border:0; border-radius:9px; padding:9px 18px; font-size:13px; cursor:pointer; }
+  .primary { background:#2563eb; color:#fff; font-weight:600; }
+  .ghost { background:#fff; border:1px solid #cbd5e1; }
+  .msg { min-height:18px; font-size:12px; color:#16a34a; }
+  .hint { font-size:12px; color:#64748b; line-height:1.6; }
+  .cols { display:flex; gap:14px; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🈯 OmniTranslate 万译 · 设置</h1>
+
+  <div class="card">
+    <h2>翻译偏好</h2>
+    <div class="grid">
+      <label><span>目标语言</span><select id="targetLang"></select></label>
+      <label><span>源语言（auto 自动检测）</span><select id="sourceLang"></select></label>
+      <label class="chk"><span>默认开启「划词翻译」</span><input type="checkbox" id="selTranslate"></label>
+      <label class="chk"><span>默认开启「图片翻译」（点击图片）</span><input type="checkbox" id="imgTranslate"></label>
+      <label class="chk"><span>翻译按钮/导航等界面文案</span><input type="checkbox" id="translateUiLabels"></label>
+      <label class="chk"><span>只翻译正文区域（跳过页头 / 导航 / 页脚 / 侧栏 / 广告）</span><input type="checkbox" id="skipNoise"></label>
+      <label class="chk"><span>页头含主标题（h1/h2）且不含导航时，按正文翻译</span><input type="checkbox" id="headerIsContent"></label>
+      <label class="chk"><span>句级重建：被行内标签切开的同一句话合并翻译（更通顺，推荐开启）</span><input type="checkbox" id="sentenceMerge"></label>
+      <label><span>并发请求数（1-16）</span><input type="number" id="concurrency" min="1" max="16"></label>
+      <label class="chk"><span>请求随机延迟 50~200ms（防风控，推荐开启）</span><input type="checkbox" id="jitter"></label>
+      <label class="chk"><span>调试日志（Console 输出扫描节点数 / 缓存命中 / 耗时）</span><input type="checkbox" id="debug"></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>翻译引擎（按顺序自动降级）</h2>
+    <div class="grid">
+      <label class="chk"><span>Google 免费端点（速度/质量佳）</span><input type="checkbox" class="provider" value="google" checked></label>
+      <label class="chk"><span>Microsoft Edge 免费端点（备用）</span><input type="checkbox" class="provider" value="edge" checked></label>
+      <label class="chk"><span>Mock（本地测试专用）</span><input type="checkbox" class="provider" value="mock"></label>
+      <label class="chk"><span>启用自定义 API（OpenAI 兼容或自建）</span><input type="checkbox" class="provider" value="custom"></label>
+      <div class="hint" id="customHint" style="display:none">
+        endpoint（必填）、apiKey（可选）、format：json 自建端点 POST {q,text,target} 返回 {translatedText}；openai 使用 /v1/chat/completions。
+      </div>
+      <label style="display:none" id="customEndpointRow"><span>endpoint</span><input type="text" id="customEndpoint" placeholder="https://…"></label>
+      <label style="display:none" id="customKeyRow"><span>apiKey</span><input type="text" id="customKey" placeholder="sk-…"></label>
+      <label style="display:none" id="customFormatRow"><span>format / model</span>
+        <span style="flex:0 1 auto"><select id="customFormat"><option value="json">json</option><option value="openai">openai</option></select>
+        <input type="text" id="customModel" placeholder="模型名（openai 时）" style="width:170px"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>进阶：请求地址覆盖（测试/内网代理用）</h2>
+    <div class="hint">留空使用默认。例：{"google":"http://127.0.0.1:8899/gtx","mock":"http://127.0.0.1:8899"}</div>
+    <textarea id="hostOverrides" rows="3" placeholder='{"google":"", "edge":"", "mock":""}'></textarea>
+  </div>
+
+  <div class="card">
+    <h2>图片 OCR</h2>
+    <div class="grid">
+      <label><span>OCR 模式</span><select id="ocrMode"><option value="tesseract">Tesseract（本地离线）</option><option value="mock">Mock（测试）</option></select></label>
+      <label><span>识别语言</span><select id="ocrLang">
+        <option value="eng">English（默认，英文网页图片）</option>
+        <option value="chi_sim">简体中文（识别中文图片）</option>
+        <option value="chi_tra">繁體中文（識別中文圖片）</option>
+        <option value="eng+chi_sim">English + 简体中文（中英混排）</option>
+      </select></label>
+      <div class="hint">Tesseract 完全离线：先在扩展目录运行 npm install &amp;&amp; npm run fetch-ocr（已内置语言包：eng 英文 / chi_sim 简体中文 / chi_tra 繁體中文，另含识别核心，共约 24MB）。中文图片请选 chi_sim；中英混排可选手动组合。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>连接 AI Language Coach 桌面端</h2>
+    <div class="hint">配合桌面端 AI Language Coach 使用：在网页上划词后，浮层底部会出现「学习这句」，点一下就把这句话交给桌面端翻译、分析和保存；也可以右键选中的文字，直接选「发送到 AI Language Coach（学习这句）」。只有你主动点击才会发送，扩展本身不保存任何学习数据。</div>
+    <div class="grid">
+      <label class="chk"><span>在划词浮层显示「学习这句」</span><input type="checkbox" id="coachEnabled"></label>
+      <label><span>连接口令</span><input type="password" id="coachToken" placeholder="在桌面端「设置 → 浏览器连接」里点「复制口令」"></label>
+    </div>
+    <div class="actions"><button class="ghost" id="coachConnect">连接</button></div>
+    <div class="hint" id="coachMsg"></div>
+  </div>
+
+  <div class="actions">
+    <button class="primary" id="save">保存设置</button>
+    <button class="ghost" id="test">测试翻译引擎</button>
+    <button class="ghost" id="reset">恢复默认</button>
+  </div>
+  <div class="msg" id="msg"></div>
+</div>
+<script src="options.js"></script>
+</body>
+</html>

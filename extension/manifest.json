@@ -1,0 +1,60 @@
+{
+  "manifest_version": 3,
+  "name": "OmniTranslate 万译 · 全能网页实时翻译",
+  "short_name": "OmniTranslate",
+  "version": "0.1.1",
+  "description": "一键整页英文翻译成中文(含评论/实时动态)，翻译不随滚动消失；划词即译；点击图片即译。多免费引擎自动降级；通用规则引擎，任意网站零适配。",
+  "minimum_chrome_version": "116",
+
+  "icons": {
+    "16": "dist/icons/icon16.png",
+    "32": "dist/icons/icon32.png",
+    "48": "dist/icons/icon48.png",
+    "128": "dist/icons/icon128.png"
+  },
+  "permissions": ["storage", "activeTab", "contextMenus", "offscreen", "scripting", "unlimitedStorage"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "background": {
+    "service_worker": "dist/sw.mjs",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["dist/content.js"],
+      "css": ["dist/content.css"],
+      "run_at": "document_idle",
+      "all_frames": true,
+      "match_about_blank": false
+    }
+  ],
+  "action": {
+    "default_title": "OmniTranslate 万译",
+    "default_popup": "dist/popup.html",
+    "default_icon": {
+      "16": "dist/icons/icon16.png",
+      "32": "dist/icons/icon32.png",
+      "48": "dist/icons/icon48.png"
+    }
+  },
+  "options_page": "dist/options.html",
+  "commands": {
+    "toggle-page-translate": {
+      "suggested_key": { "default": "Alt+T" },
+      "description": "整页翻译 / 还原"
+    },
+    "toggle-sel-mode": {
+      "suggested_key": { "default": "Alt+Shift+S" },
+      "description": "开关 划词翻译浮层"
+    }
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["dist/offscreen.html", "dist/offscreen.mjs", "vendor/tesseract/*"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
+  ]
+}

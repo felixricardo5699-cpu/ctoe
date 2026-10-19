@@ -1,0 +1,23 @@
+{
+  "name": "omni-translate",
+  "version": "0.1.1",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "description": "OmniTranslate 万译 - open-source whole-page translation extension (en->zh, live sites, selection & image translate)",
+  "scripts": {
+    "build": "node build.mjs",
+    "pack": "node tools/package.mjs",
+    "verify:pack": "node tools/package.mjs --verify",
+    "fetch-ocr": "node fetch-ocr.mjs",
+    "unit": "node --test tests/unit/text.test.mjs tests/unit/hash.test.mjs tests/unit/rules.test.mjs tests/unit/queue.test.mjs tests/unit/merge.test.mjs tests/unit/writer.test.mjs tests/unit/engines.test.mjs tests/unit/bridge.test.mjs",
+    "e2e": "node tests/e2e/run.mjs",
+    "test": "npm run build && npm run unit && npm run e2e"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "playwright": "^1.63.0",
+    "playwright-core": "^1.50.0",
+    "tesseract.js": "^4.0.6"
+  }
+}

@@ -1,0 +1,311 @@
+/* ============ OmniTranslate 万译 UI ============ */
+.ot-ui, .ot-ui * { box-sizing: border-box; }
+#ot-fab.ot-ui,
+#ot-panel.ot-ui,
+#ot-sel-card.ot-ui {
+  position: fixed;
+  z-index: 2147483646;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: normal;
+  -webkit-font-smoothing: antialiased;
+}
+.ot-ui button { font: inherit; cursor: pointer; }
+.ot-ui input[type="checkbox"] { accent-color: #2563eb; }
+
+#ot-fab {
+  right: 18px;
+  bottom: 18px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(37, 99, 235, .35);
+  background: linear-gradient(145deg, #2563eb, #1d4ed8);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(29, 78, 216, .35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 0;
+  transition: transform .15s, box-shadow .2s;
+  user-select: none;
+}
+#ot-fab:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 10px 24px rgba(29, 78, 216, .45); }
+#ot-fab .ot-fab-ico { margin-top: -2px; }
+#ot-fab .ot-fab-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 10px;
+  background: #f59e0b;
+  color: #111;
+  font-size: 10px;
+  line-height: 18px;
+  text-align: center;
+  padding: 0 3px;
+  border: 2px solid #fff;
+}
+#ot-fab.ot-on .ot-fab-dot { background: #22c55e; color: #fff; }
+
+#ot-panel {
+  right: 18px;
+  bottom: 74px;
+  width: 318px;
+  max-width: calc(100vw - 24px);
+  background: #fff;
+  color: #111827;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, .18);
+  display: none;
+  overflow: hidden;
+}
+#ot-panel.ot-open { display: block; }
+#ot-panel .ot-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  color: #fff;
+  cursor: grab;
+  user-select: none;
+}
+#ot-panel .ot-panel-head:active { cursor: grabbing; }
+#ot-panel .ot-panel-title { font-weight: 700; font-size: 14px; }
+#ot-panel .ot-host { font-size: 11px; opacity: .8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 130px; }
+/* 头部是三段（标题 / 域名 / 叉号）：不给域名这一行 auto 外边距，它会被 space-between 挤到中间。 */
+#ot-panel .ot-host { margin-left: auto; }
+#ot-panel .ot-panel-close {
+  flex: none;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1;
+  padding: 3px 5px;
+  border-radius: 6px;
+  opacity: .85;
+}
+#ot-panel .ot-panel-close:hover { opacity: 1; background: rgba(255, 255, 255, .18); }
+#ot-panel .ot-panel-body { padding: 12px 14px; display: grid; gap: 10px; }
+#ot-panel .ot-status { font-size: 12px; color: #4b5563; line-height: 1.5; min-height: 16px; }
+#ot-panel .ot-block { width: 100%; }
+.ot-ui .ot-btn {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #111827;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 13px;
+  line-height: 1.2;
+  transition: background .12s, border-color .12s;
+}
+.ot-ui .ot-btn:hover { background: #f3f4f6; }
+.ot-ui .ot-btn.ot-primary {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  padding: 10px 12px;
+  font-size: 14px;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, .3);
+}
+.ot-ui .ot-btn.ot-primary:hover { background: #1d4ed8; }
+.ot-ui .ot-btn.ot-primary.ot-primary-on { background: #16a34a; border-color: #16a34a; box-shadow: none; }
+#ot-panel .ot-mode-row { display: flex; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden; }
+#ot-panel .ot-mode-btn { flex: 1; border: 0; background: #fff; padding: 7px 4px; font-size: 13px; color: #6b7280; }
+#ot-panel .ot-mode-btn + .ot-mode-btn { border-left: 1px solid #d1d5db; }
+#ot-panel .ot-mode-btn.ot-active { background: #dbeafe; color: #1d4ed8; font-weight: 600; }
+#ot-panel .ot-switch { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #374151; }
+#ot-panel .ot-switch input { display: none; }
+#ot-panel .ot-switch .ot-switch-slider {
+  width: 36px; height: 20px; border-radius: 12px; background: #d1d5db; position: relative; flex: none; transition: background .15s;
+}
+#ot-panel .ot-switch .ot-switch-slider::after {
+  content: ""; position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: left .15s;
+}
+#ot-panel .ot-switch input:checked + .ot-switch-slider { background: #2563eb; }
+#ot-panel .ot-switch input:checked + .ot-switch-slider::after { left: 18px; }
+#ot-panel .ot-panel-tip { font-size: 11px; color: #9ca3af; line-height: 1.5; border-top: 1px dashed #e5e7eb; padding-top: 8px; }
+#ot-panel .ot-panel-foot { display: flex; justify-content: space-between; padding: 8px 14px; border-top: 1px solid #f3f4f6; }
+
+#ot-sel-card {
+  position: fixed;
+  max-width: 420px;
+  min-width: 230px;
+  background: #fff;
+  color: #111827;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, .16);
+  overflow: hidden;
+  font-size: 13px;
+}
+#ot-sel-card .ot-sel-head {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #eff6ff; padding: 6px 10px; font-size: 12px; color: #1d4ed8; font-weight: 600;
+}
+#ot-sel-card .ot-sel-actions { display: flex; gap: 2px; }
+#ot-sel-card .ot-btn { border: 0; background: transparent; color: #1d4ed8; padding: 2px 6px; font-size: 13px; border-radius: 6px; }
+#ot-sel-card .ot-btn:hover { background: #dbeafe; }
+#ot-sel-card .ot-sel-body { padding: 8px 12px; }
+#ot-sel-card .ot-sel-src { font-size: 12px; color: #6b7280; line-height: 1.5; margin-bottom: 6px; max-height: 96px; overflow: auto; }
+#ot-sel-card .ot-sel-dst { font-size: 14px; color: #111827; line-height: 1.6; min-height: 20px; }
+#ot-sel-card .ot-sel-dst.ot-loading { color: #9ca3af; }
+#ot-sel-card .ot-sel-dst.ot-err { color: #dc2626; font-size: 12px; }
+#ot-sel-card .ot-sel-dst.ot-done { color: #111827; }
+/* 划词卡底部：AI Language Coach 的「学习这句」（:empty 时整条不占位） */
+#ot-sel-card .ot-sel-foot { display: flex; gap: 6px; padding: 6px 12px 10px; }
+#ot-sel-card .ot-sel-foot:empty { display: none; }
+#ot-sel-card .ot-sel-foot .ot-btn { border: 1px solid #cbd5e1; background: #f8fafc; color: #1d4ed8; padding: 4px 10px; font-size: 12px; border-radius: 7px; }
+#ot-sel-card .ot-sel-foot .ot-btn:hover { background: #eff6ff; }
+#ot-sel-card .ot-sel-foot .ot-btn:disabled { opacity: .65; cursor: default; }
+#ot-sel-card .ot-sel-foot .ot-btn.ot-ok { color: #16a34a; border-color: #86efac; background: #f0fdf4; }
+#ot-sel-card .ot-sel-foot .ot-btn.ot-err { color: #dc2626; border-color: #fca5a5; background: #fef2f2; }
+/* 右键「发送到 AI Language Coach」的回执：右下角一条，不拦点击，几秒后自己消失 */
+#ot-coach-toast { position: fixed; right: 16px; bottom: 16px; z-index: 2147483647; max-width: 320px; padding: 10px 14px; border-radius: 10px; background: #111827; color: #f9fafb; font-size: 13px; line-height: 1.5; box-shadow: 0 8px 24px rgba(0, 0, 0, .28); pointer-events: none; font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; }
+#ot-coach-toast.ot-ok { background: #14532d; color: #dcfce7; }
+#ot-coach-toast.ot-err { background: #7f1d1d; color: #fee2e2; }
+#ot-sel-card.ot-pinned { min-width: 0; max-width: 300px; position: fixed; left: 12px !important; top: auto !important; right: 12px; bottom: 12px; }
+#ot-sel-card.ot-pinned .ot-sel-src { display: none; }
+
+/* ============ 图片翻译：图内底部统一面板（合并译文、固定字号、不按 OCR 框排版） ============ */
+.ot-ui.ot-img-box {
+  /* 浮层挂在 <html> 层，用文档绝对定位覆盖在图片位置上：页面 DOM 一个节点都不动 */
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  z-index: 2147482000;
+  line-height: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: normal;
+  -webkit-font-smoothing: antialiased;
+}
+.ot-img-box > img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+.ot-img-box .ot-img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 3;
+  pointer-events: none;
+}
+.ot-img-box .ot-trans-panel {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  box-sizing: border-box;
+  max-height: calc(100% - 20px);
+  overflow: auto;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+  text-align: left;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  pointer-events: auto;
+  z-index: 4;
+}
+.ot-img-box.ot-show-orig .ot-trans-panel,
+.ot-img-box.ot-show-orig .ot-img-status { visibility: hidden; opacity: 0; }
+.ot-img-box .ot-img-ctrl {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 5;
+  display: flex;
+  gap: 4px;
+  pointer-events: auto;
+}
+.ot-img-box .ot-img-ctrl .ot-btn {
+  border: 0;
+  background: rgba(15, 23, 42, 0.78);
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 11px;
+  line-height: 1;
+  border-radius: 999px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  transition: background .12s;
+}
+.ot-img-box .ot-img-ctrl .ot-btn:hover { background: #2563eb; }
+.ot-img-box .ot-img-ctrl .ot-btn.on { background: #16a34a; }
+.ot-img-box .ot-img-status {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  max-width: 92%;
+  padding: 5px 12px;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.8);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+}
+.ot-img-box .ot-img-status.ot-err { background: rgba(153, 27, 27, 0.9); }
+img.ot-img-hover { outline: 2px dashed #f59e0b !important; outline-offset: 2px; cursor: copy !important; }
+/* 双语对照：**只挂属性、不动 DOM**（旧实现把容器搬进新建的 .ot-zone wrapper，
+   在 React/grid 布局站点上会把页面搬散）。原文由伪元素渲染，伪元素不属于 DOM，
+   React / lit 的渲染器完全无感，也不会产生任何节点增删。 */
+[data-ot-src]::after {
+  content: attr(data-ot-src);
+  display: block;
+  white-space: pre-wrap;
+  color: #6b7280;
+  font-size: 0.92em;
+  line-height: 1.6;
+  margin: 2px 0 0;
+  opacity: .75;
+}
+
+@media (prefers-color-scheme: dark) {
+  #ot-panel { background: #1f2937; color: #f9fafb; border-color: #374151; }
+  #ot-panel .ot-status { color: #d1d5db; }
+  #ot-panel .ot-mode-btn { background: #111827; color: #9ca3af; }
+  #ot-panel .ot-mode-btn + .ot-mode-btn { border-left-color: #374151; }
+  #ot-panel .ot-mode-btn.ot-active { background: #1e3a8a; color: #bfdbfe; }
+  #ot-panel .ot-panel-tip { color: #6b7280; border-top-color: #374151; }
+  #ot-panel .ot-switch { color: #e5e7eb; }
+  #ot-panel .ot-panel-foot { border-top-color: #374151; }
+  .ot-ui .ot-btn { background: #374151; color: #f9fafb; border-color: #4b5563; }
+  .ot-ui .ot-btn:hover { background: #4b5563; }
+  #ot-sel-card { background: #1f2937; color: #f9fafb; border-color: #1e3a8a; }
+  #ot-sel-card .ot-sel-head { background: #111827; color: #93c5fd; }
+  #ot-sel-card .ot-btn { color: #93c5fd; }
+  #ot-sel-card .ot-sel-foot .ot-btn { background: #374151; border-color: #4b5563; color: #93c5fd; }
+  #ot-sel-card .ot-sel-foot .ot-btn.ot-ok { background: #14532d; border-color: #166534; color: #86efac; }
+  #ot-sel-card .ot-sel-foot .ot-btn.ot-err { background: #7f1d1d; border-color: #991b1b; color: #fca5a5; }
+  #ot-coach-toast { background: #f3f4f6; color: #111827; box-shadow: 0 8px 24px rgba(0, 0, 0, .45); }
+  #ot-coach-toast.ot-ok { background: #dcfce7; color: #14532d; }
+  #ot-coach-toast.ot-err { background: #fee2e2; color: #7f1d1d; }
+  #ot-sel-card .ot-sel-src { color: #9ca3af; }
+  #ot-sel-card .ot-sel-dst.ot-done { color: #f9fafb; }
+
+}

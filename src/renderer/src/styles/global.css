@@ -1,0 +1,1174 @@
+:root {
+  --bg: #f5f6f8;
+  --panel-bg: #ffffff;
+  --panel-bg-soft: #fafbfc;
+  --border: #e3e6eb;
+  --text: #1d2129;
+  --muted: #6b7280;
+  --accent: #2f6fed;
+  --accent-text: #ffffff;
+  --accent-soft: rgba(47, 111, 237, 0.12);
+  --danger: #c0392b;
+  --radius: 10px;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1d21;
+    --panel-bg: #24262b;
+    --panel-bg-soft: #1f2125;
+    --border: #34373d;
+    --text: #e8eaed;
+    --muted: #9aa0a6;
+    --accent: #5b8def;
+    --accent-soft: rgba(91, 141, 239, 0.18);
+    --danger: #ff8a80;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+/* The window itself is transparent (that is what makes the ball a ball), so every
+   opaque surface has to be painted by a view: .panel-frame for the panel, and the
+   ball's own circle. */
+body {
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Stands in for the window frame: rounded corners, border and the expand animation. */
+.panel-frame {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  animation: panel-in 140ms ease-out;
+}
+
+.panel-frame[data-anchor='below'] {
+  transform-origin: top center;
+}
+
+.panel-frame[data-anchor='above'] {
+  transform-origin: bottom center;
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.assistant,
+.settings {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  padding: 12px 14px;
+  gap: 8px;
+}
+
+/* The header doubles as the drag handle for the frameless panel window. */
+.assistant__header,
+.settings__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  -webkit-app-region: drag;
+}
+
+.assistant__header button,
+.settings__header button,
+.assistant__header input,
+.settings__header select {
+  -webkit-app-region: no-drag;
+}
+
+.assistant__title,
+.settings__title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+
+.settings__title {
+  font-size: 15px;
+  color: var(--text);
+}
+
+.assistant__header-actions,
+.settings__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* The three page links and the two window buttons share this row with the title. A label is
+   never worth clipping, so the row is allowed to wrap on a narrow panel instead. */
+.assistant__header-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  row-gap: 4px;
+}
+
+.assistant__header-actions .button,
+.settings__header-actions .button {
+  white-space: nowrap;
+}
+
+/* Who the user is, and which way this run goes. Neither is chosen per run: the direction
+   follows from the profile plus the mode (Say it = native -> learning, Understand = the same
+   pair walked back), so this strip states the profile and offers the modes - nothing else. */
+.modebar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-self: flex-start;
+  max-width: 100%;
+}
+
+.modebar__profile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.modebar__role {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.modebar__sep {
+  color: var(--border);
+}
+
+.modebar__switch {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel-bg-soft);
+}
+
+.modebar__tab {
+  padding: 3px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.modebar__tab:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.modebar__tab--active {
+  background: var(--panel-bg);
+  color: var(--accent);
+  box-shadow: 0 1px 2px rgba(29, 33, 41, 0.08);
+}
+
+/* A mode switch during a request would leave the answer under the wrong label, so it waits. */
+.modebar__tab:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+/* Window buttons: small, quiet, and never the visual focus of the panel. */
+.chrome {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.chrome:hover {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+/*
+ * flex-basis 0 lets the two boxes share whatever the window has left, but a Learn block
+ * must never squash them into an unreadable sliver: 72px covers the tallest label row (the
+ * input box carries paste/copy buttons) plus two lines of text. The note gives way instead -
+ * it scrolls, the text boxes do not.
+ */
+.panel {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-height: 72px;
+}
+
+.panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+/* The label row is short; keep the buttons from stretching it. */
+.panel__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.panel__hint {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* The input label is a question the user answers, so it opts out of the tiny
+   uppercase style used for the other labels. */
+.panel__label--prompt {
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.panel__label {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.panel__text {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel-bg);
+  color: var(--text);
+  font: inherit;
+  line-height: 1.55;
+  outline: none;
+}
+
+.panel__text:focus {
+  border-color: var(--accent);
+}
+
+.panel__text[readonly] {
+  background: var(--panel-bg-soft);
+}
+
+/* Right-aligned counter under the input box, so the 8000-character cap is visible
+   before the user hits it. */
+.assistant__meta {
+  margin: -4px 0 0;
+  text-align: right;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* 第一次用的三步卡：只在还没走完时出现，走完就消失。 */
+.start {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel-bg-soft);
+}
+
+.start__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.start__heading {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.start__close {
+  border: 0;
+  padding: 0 2px;
+  background: none;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.start__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.start__step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.start__mark {
+  flex: none;
+  width: 14px;
+  text-align: center;
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.start__step--done .start__mark,
+.start__step--done .start__title {
+  color: var(--muted);
+}
+
+.start__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.start__title {
+  font-size: 12px;
+  color: var(--text);
+}
+
+.start__detail {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+/* Learn is secondary information: it reads quieter than the result box, scrolls on its
+   own, and can never squeeze the two text areas out of the window. */
+.analysis {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel-bg-soft);
+}
+
+.analysis__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.analysis__close {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.analysis__close:hover {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.analysis__title {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.analysis__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.analysis__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* A hairline keeps three points readable without turning them into cards. */
+.analysis__item + .analysis__item {
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.analysis__head {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+}
+
+.analysis__kind {
+  flex: 0 0 auto;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.analysis__expression {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.analysis__meaning {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.analysis__why,
+.analysis__example {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.analysis__example {
+  font-style: italic;
+}
+
+/*
+ * The example in the user's own language. It pairs with the italic line above it - "how is it
+ * used" is only checkable for a learner who can read both halves - so it is set as body text
+ * rather than as more of the lesson.
+ */
+.analysis__example-translation {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/*
+ * Read-aloud. One button per line in the language being learned - never one on a translation -
+ * and it shows while it is playing. Nothing plays on its own: this is the only way to start it.
+ */
+.speak {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.speak:hover:not(:disabled) {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.speak--on {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* This machine has no voice: the button stays, but it stops pretending it would do anything. */
+.speak:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* The flex rows already space it; inside a line of prose it follows the text it reads. */
+.analysis__example .speak,
+.language__original .speak,
+.language__translation .speak,
+.language__expression .speak {
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+/*
+ * What the note says about the write it arrived with: asking for Learn is the study act, so the
+ * sentence is already filed by the time this is drawn. It is a receipt, not a control - there is
+ * nothing under the note to press, and no saved-or-not state for the user to keep track of.
+ */
+.analysis__footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* One short line: which sentence went in, under which number. */
+.analysis__saved {
+  margin: 0;
+  font-size: 11px;
+  color: var(--accent);
+}
+
+/* A write that did not land keeps its note: it is said plainly rather than swallowed. */
+.analysis__saved--failed {
+  color: var(--danger);
+}
+
+/* ------------------------------------------------------------------ my language */
+
+/*
+ * My Learning is a page, not the panel: the page already scrolls, so records can be as long
+ * as the lesson needs without squeezing the input box.
+ */
+.language__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.language__tab {
+  padding: 5px 11px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.language__tab:hover {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.language__tab--active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.language__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* One saved moment: the sentence as it happened, with the other side of the pair under it. */
+.language__record {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel-bg);
+}
+
+/** The id and the direction share a row: what this is, and which way it went. */
+.language__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.language__id {
+  margin: 0;
+  font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+/** The same words the panel's tabs use, because it is the same idea: Say it, or Understand. */
+.language__mode {
+  flex: none;
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* One remembered translation: which way it went and when, over the two lines themselves. */
+.recent__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.recent__pair {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+
+.recent__when {
+  flex: none;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/*
+ * What can be done with one remembered translation. Most rows offer Learn - the list is what is
+ * left of a moment the user translated and then moved on from - and a row that has been learned
+ * says where it went instead. Both sit at the foot of the row, clear of the two lines.
+ */
+.recent__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 20px;
+}
+
+/* The receipt, not a button: this row is already in My Learning, under that number. */
+.recent__learned {
+  font-size: 11px;
+  color: var(--accent);
+}
+
+/* A row that cannot be learned says so rather than quietly hiding the offer. */
+.recent__note {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.language__original {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.language__translation {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.language__knowledge-title {
+  margin: 2px 0 0;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+/* Opens and closes the points of one sentence; the count above it says how many there are. */
+.language__knowledge-toggle {
+  align-self: flex-start;
+}
+
+/* Which sentence a point under Expressions / Vocabulary came from. */
+.language__from {
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.language__expression {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.language__meaning {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* The landing view: one row per language pair, which is the only thing always true of a
+   saved sentence - it happened in one pair and stays in it. */
+.language__pairs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.language__pair-button {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel-bg);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.language__pair-button:hover {
+  border-color: var(--accent);
+}
+
+.language__pair-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.language__pair-count {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.language__pair-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.language__pair-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/*
+ * The one search box, on the landing view only. It looks through every pair at once, and every
+ * hit it returns is a whole sentence rather than a word pulled out of one.
+ */
+.language__search {
+  display: flex;
+}
+
+.language__search-input {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel-bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+}
+
+.language__search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.language__results {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.language__result-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.language__group-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.language__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.assistant__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toolbar,
+.settings__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.tone__select,
+.field__input {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.tone__select:focus,
+.field__input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.button {
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-bg);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.button--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+.button--primary:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.button--mini {
+  padding: 2px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.button--ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+}
+
+.status {
+  margin: 0;
+  min-height: 16px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.status--error {
+  color: var(--danger);
+}
+
+.status--busy {
+  color: var(--accent);
+}
+
+.badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 11px;
+}
+
+/*
+ * Fixed header, scrolling content. The way back and the two window buttons have to stay put
+ * while a long page is scrolled, and the header is a flex sibling of the scroller rather than
+ * a sticky element inside it - so nothing can ever slide underneath it, and no background or
+ * z-index is needed to hide that it would.
+ */
+.settings {
+  overflow: hidden;
+}
+
+.settings__header {
+  flex: none;
+}
+
+.settings__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.settings__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field__label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.field__hint,
+.note {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.note {
+  font-size: 12px;
+}
+
+.note--warn {
+  color: var(--danger);
+}
+
+/* 设置页里的分步说明：编号列表比再接一段 hint 更好扫，所以单开一个类 */
+.settings__steps {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.crash {
+  height: 100%;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 24px;
+}
+
+.crash__title {
+  margin: 0;
+  font-weight: 600;
+}
+
+.crash__detail {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ floating ball */
+
+/*
+ * The ball fills its (square, transparent) window exactly. It is a real <button> so it
+ * keeps keyboard/a11y semantics, but nothing here takes focus on its own: the window is
+ * shown with showInactive() so clicking the ball never steals focus from the app the
+ * user is actually working in.
+ */
+.floating-ball {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  background: var(--accent);
+  color: #ffffff;
+  font: inherit;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: filter 120ms ease, transform 120ms ease;
+}
+
+.floating-ball:hover {
+  filter: brightness(1.12);
+}
+
+.floating-ball:active {
+  cursor: grabbing;
+  transform: scale(0.94);
+}
+
+.floating-ball:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: -4px;
+}
+
+.floating-ball__glyph {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------- settings groups */
+
+.settings__group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel-bg);
+}
+
+/* 「高级」折叠：默认收起，让第一屏只剩必须做的那件事（API Key）。 */
+.settings__advanced {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+}
+
+.settings__advanced > summary {
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.settings__advanced[open] > summary {
+  margin-bottom: 8px;
+}
+
+.settings__advanced > .field {
+  margin-top: 8px;
+}
+
+/* 设置页文案流里唯一的链接（去申请 API Key）。 */
+.settings__link {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.settings__legend {
+  padding: 0 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.switch {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.switch input {
+  margin: 1px 0 0;
+  accent-color: var(--accent);
+}
+
+.field__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.field__row .field__input {
+  flex: 1 1 auto;
+  min-width: 0;
+}

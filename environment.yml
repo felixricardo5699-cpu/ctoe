@@ -1,0 +1,10 @@
+# ctoe 的应用运行时不需要 Python（Electron + React + TypeScript）。
+# 这个 Conda 环境只作为「项目独立、可迁移的开发/脚本环境」存在：
+#   - 不污染系统 Python，也不改动其它已有环境
+#   - 不把 Python 塞进应用运行时
+# 真正的应用依赖边界在 package.json + package-lock.json。
+name: ctoe
+channels:
+  - defaults
+dependencies:
+  - python=3.12

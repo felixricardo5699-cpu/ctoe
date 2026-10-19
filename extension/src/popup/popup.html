@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!-- 工具栏弹窗结构（脚本 dist/popup.js）：整页翻译开关 / 仅译文与双语对照 / 划词 / 图片 / 引擎自测 -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  :root { color-scheme: light dark; }
+  body { width: 300px; margin: 0; font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 13px; }
+  header { display:flex; align-items:center; gap:8px; padding:12px 14px; background:linear-gradient(135deg,#1d4ed8,#2563eb); color:#fff; }
+  header .logo { width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.2); display:flex;align-items:center;justify-content:center;font-weight:800; }
+  header h1 { font-size:14px; margin:0; }
+  .body { padding:12px 14px; display:grid; gap:12px; }
+  #btnToggle { width:100%; padding:11px 10px; font-size:14px; border:0; border-radius:10px; background:#2563eb; color:#fff; font-weight:600; cursor:pointer; }
+  #btnToggle.on { background:#16a34a; }
+  .status { font-size:11px; color:#6b7280; min-height:14px; }
+  .row { display:flex; justify-content:space-between; align-items:center; }
+  .seg { display:flex; border:1px solid #ccc; border-radius:8px; overflow:hidden; }
+  .seg button { flex:1; border:0; padding:6px 4px; background:transparent; cursor:pointer; font-size:12px; }
+  .seg button.on { background:#dbeafe; font-weight:600; color:#1d4ed8; }
+  .switch { display:flex; align-items:center; gap:8px; }
+  .switch input { accent-color:#2563eb; }
+  footer { display:flex; justify-content:space-between; padding:8px 14px; border-top:1px solid #eee; }
+  footer button { border:0; background:none; color:#2563eb; cursor:pointer; font-size:12px; }
+  .hint { font-size:11px; color:#9ca3af; line-height:1.5; }
+  .coach { border:1px solid #e5e7eb; border-radius:10px; padding:10px; display:grid; gap:8px; }
+  .coach__head { display:flex; align-items:center; justify-content:space-between; }
+  .coach__title { font-weight:600; font-size:12px; }
+  .coach__dot { width:8px; height:8px; border-radius:50%; background:#d1d5db; }
+  .coach__dot.on { background:#16a34a; }
+  .coach__token { width:100%; box-sizing:border-box; border:1px solid #cbd5e1; border-radius:8px; padding:7px 9px; font-size:12px; }
+  .coach__row { display:flex; gap:8px; }
+  .coach__btn { flex:1; border:1px solid #cbd5e1; background:#fff; border-radius:8px; padding:7px 8px; font-size:12px; cursor:pointer; color:inherit; }
+  .coach__btn--primary { background:#2563eb; border-color:#2563eb; color:#fff; font-weight:600; }
+  .coach__btn:disabled { opacity:.6; cursor:default; }
+  .coach-ok { color:#16a34a; }
+  .coach-warn { color:#dc2626; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">译</div>
+  <h1>OmniTranslate 万译</h1>
+</header>
+<div class="body">
+  <button id="btnToggle">一键翻译本页</button>
+  <div class="status" id="status">正在读取页面状态…</div>
+  <div class="row"><span>显示方式</span><span class="seg" id="segMode"><button data-mode="replace">仅译文</button><button data-mode="bilingual">双语对照</button></span></div>
+  <label class="switch"><input type="checkbox" id="chkSel"> 划词翻译（选中即译）</label>
+  <label class="switch"><input type="checkbox" id="chkImg"> 图片翻译（点图即译）</label>
+  <div class="hint">快捷键：Alt+T 整页翻译 / 还原</div>
+  <div class="coach">
+    <div class="coach__head"><span class="coach__title">AI Language Coach</span><span class="coach__dot" id="coachDot"></span></div>
+    <label class="switch"><input type="checkbox" id="coachEnabled"> 在划词浮层显示「学习这句」</label>
+    <input class="coach__token" id="coachToken" type="text" spellcheck="false" placeholder="连接口令（桌面端设置里复制）">
+    <div class="coach__row"><button class="coach__btn" id="coachPaste">粘贴口令</button><button class="coach__btn coach__btn--primary" id="coachConnect">连接</button></div>
+    <div class="hint" id="coachMsg">桌面端「设置 → 浏览器连接」→ 复制口令 → 点「粘贴口令」再点「连接」。</div>
+  </div>
+</div>
+<footer><button id="btnOptions">⚙ 更多设置</button><button id="btnTest">测试翻译引擎</button></footer>
+<script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+appId: com.ctoe.assistant
+productName: ctoe
+directories:
+  output: release
+  buildResources: build
+# 直接用 npm 已经装好的 Electron（node_modules/electron/dist）而不是再去 GitHub 下载一份：
+# 打包更快、断网也能构建，用的还是 package.json 里写死的那一版。macOS / Linux 上这个目录同样是本机版本。
+electronDist: node_modules/electron/dist
+# 渲染层已经被 Vite 打进 out/renderer，所以只需要发布构建产物。
+files:
+  - out/**/*
+  - package.json
+  - '!node_modules/**'
+  - '!**/*.map'
+asar: true
+# 随安装包一起分发的浏览器扩展。扩展源码现在就在本仓库的 extension/ 里，npm run
+# build:extension 把 src/ 构建成 dist/，这里只挑浏览器真正要的三样放进资源目录：
+# manifest + dist + vendor（离线 OCR 组件）。源码、测试、node_modules 都不进包。
+# 装完之后桌面端能把用户送到这个文件夹，让他用浏览器自己的「加载已解压的扩展程序」装上 ——
+# 浏览器不允许多的软件替用户装扩展，所以这里能做的只有"把东西递到手上"。
+extraResources:
+  - from: extension
+    to: extension
+    filter:
+      - manifest.json
+      - dist/**/*
+      - vendor/**/*
+# 打包前的守门：安装包必须带上扩展。electron-builder 对 extraResources 里不存在的
+# from 只打一行日志、然后仍然 exit 0，所以曾经发出过一份装完才提示没有带上浏览器扩展的安装包。
+beforePack: ./scripts/require-extension.mjs
+# 瘦身：默认删掉本程序用不到的 Chromium 组件（dxcompiler / vk_swiftshader / ffmpeg，约 33MB 解包、
+# 实测安装包 96.5MB → 89.2MB）。渲染层是纯 DOM，不需要 WebGPU / 软件 Vulkan / 媒体解码。
+# 万一某台机器需要它们，用 CTOE_KEEP_RUNTIME=1 打一个完整运行时。
+afterPack: ./scripts/strip-runtime.mjs
+# 只带产品真正支持的 6 种语言的 Chromium 语言包：Electron 自带 55 个 .pak（解压后约 48MB），
+# 剩下 49 个用不到，去掉后安装包体积明显变小。
+electronLanguages:
+  - en-US
+  - zh-CN
+  - fr
+  - es
+  - ru
+  - ar
+npmRebuild: false
+# 浏览器扩展的「门铃」：扩展用 ctoe:// 把桌面软件唤到前台。注意这个键只喂给 macOS（Info.plist 的
+# CFBundleURLTypes）、Linux 和 Appx——electron-builder 不拿它写 Windows 的注册表，所以 Windows 上是
+# 两边自己写：安装程序（build/installer.nsh，HKCU）和应用启动时的 setAsDefaultProtocolClient()。
+# 它只负责唤起，绝不携带句子或令牌——
+# 命令行参数谁都能伪造，所以句子一律走 loopback bridge（见 README「浏览器连接」）。
+protocols:
+  - name: ctoe
+    schemes:
+      - ctoe
+portable:
+  artifactName: ctoe-portable-${version}-${arch}.${ext}
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+nsis:
+  artifactName: ctoe-setup-${version}-${arch}.${ext}
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  shortcutName: ctoe
+  # 本工具没有自动更新，用不到差量更新包：关掉它，安装包用的是完整压缩（字典大、体积小）。
+  differentialPackage: false
+mac:
+  target:
+    - dmg
+  category: public.app-category.productivity
+linux:
+  target:
+    - AppImage
+  category: Utility

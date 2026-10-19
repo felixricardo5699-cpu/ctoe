@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<!-- 离屏文档（chrome.offscreen）：只为跑 Tesseract OCR —— 内容脚本所在页面加载不了 wasm worker，
+     所以由后台把图片送到这个看不见的文档里识别，再把「文本行 + bbox」回传。
+     脚本：dist/offscreen.mjs；离线组件：vendor/tesseract/（由 manifest 的 web_accessible_resources 放行）。 -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>OmniTranslate offscreen</title>
+</head>
+<body>
+  <script type="module" src="./offscreen.mjs"></script>
+</body>
+</html>

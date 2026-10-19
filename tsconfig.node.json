@@ -1,0 +1,25 @@
+{
+  "include": ["electron.vite.config.ts", "vitest.config.ts", "vitest.setup.ts", "src/main/**/*", "src/preload/**/*", "src/shared/**/*"],
+  "compilerOptions": {
+    "composite": true,
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": false,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@shared/*": ["./src/shared/*"]
+    }
+  }
+}

@@ -1,0 +1,36 @@
+# dependencies
+node_modules/
+
+# build output
+out/
+dist/
+release/
+
+# local caches (never committed)
+.cache/
+
+# the extension's own build products live next to its source now (extension/), so the root rules
+# above already cover extension/dist and extension/release. The 24MB OCR model is downloaded by
+# `npm run fetch:ocr`, never committed.
+extension/vendor/tesseract/
+extension/.test-profile/
+
+# secrets / local config
+.env
+.env.*
+*.local
+credentials.json
+
+# generated type metadata
+*.tsbuildinfo
+
+# logs
+*.log
+npm-debug.log*
+
+# editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
