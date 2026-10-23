@@ -1,4 +1,4 @@
-﻿// ============ OmniTranslate 内容脚本入口（esbuild 打包为 IIFE） ============
+// ============ OmniTranslate 内容脚本入口（esbuild 打包为 IIFE） ============
 import { loadSettings, saveSettings, sanitizeSettings, getSettings } from './core/settings.mjs';
 import { PageTranslator } from './core/translator.mjs';
 import { SelectionTranslator } from './core/selection.mjs';
@@ -174,6 +174,20 @@ function syncFramesEnabled(enabled) {
 
 function bindMessages(controller) {
   if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.onMessage) return;
+
+  // 兜底：换路径重新加载扩展后，Chrome 有时不会真正分配 manifest 里的 suggested_key，
+  // chrome.commands 永远不触发，Alt+T 就「坏掉」了。页面自己认一次这个组合键，翻译照样能用。
+  // 命令正常时 Chrome 会吃掉这次按键，页面收不到，所以两条路不会互相抢。
+  doc.addEventListener('keydown', (event) => {
+    if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    if (event.code !== 'KeyT' && String(event.key).toLowerCase() !== 't') return;
+    event.preventDefault();
+    try {
+      const pending = chrome.runtime.sendMessage({ type: 'ot-toggle-page-hotkey' });
+      if (pending && typeof pending.catch === 'function') pending.catch(() => {});
+    } catch (_e) { /* 扩展上下文已失效（页面还是旧的），刷新一次页面即可恢复 */ }
+  }, true);
+
   chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     if (!msg || typeof msg !== 'object') return;
     if (msg.cmd === 'ot-frame-state') {

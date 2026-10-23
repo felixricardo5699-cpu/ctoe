@@ -74,7 +74,7 @@ chrome.commands.onCommand.addListener((command) => {
   chrome.tabs.query({ active: true, currentWindow: true }).then(([tab]) => {
     if (!tab || tab.id == null) return;
     if (command === 'toggle-page-translate') {
-      sendToTab(tab.id, { cmd: 'ot-toggle-page' });
+      requestPageToggle(tab.id);
     } else {
       // 在内容页读取当前状态再翻转（通过 toggle-page 的兄弟消息简化为直接切换）
       chrome.tabs.sendMessage(tab.id, { cmd: 'ot-get-state' }, { frameId: 0 }).then((res) => {
@@ -84,6 +84,22 @@ chrome.commands.onCommand.addListener((command) => {
     }
   }).catch(() => {});
 });
+
+// 「整页翻译」只有这一个入口，两条路都走它：Chrome 分配给扩展的快捷键，和页面里自己认的 Alt+T。
+//
+// 后者是为了兜住一个真实故障：换路径重新加载扩展之后，Chrome 有时并不把 manifest 里的
+// suggested_key 真正分配下来（扩展的 commands 里没有 was_assigned），按 Alt+T 完全没有反应，
+// 而 chrome://extensions/shortcuts 里那一栏是空的。页面自己认键就不依赖这次分配。
+//
+// 两条路不会同时生效：命令被 Chrome 消费时页面收不到这次按键；万一系统把两边都送到了，
+// 400ms 的去重保证只翻转一次。
+let lastToggleAt = 0;
+function requestPageToggle(tabId) {
+  const now = Date.now();
+  if (now - lastToggleAt < 400) return;
+  lastToggleAt = now;
+  sendToTab(tabId, { cmd: 'ot-toggle-page' });
+}
 
 async function sendToTab(tabId, msg, opts) {
   try {
@@ -128,6 +144,20 @@ async function ensureOffscreen() {
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (!msg || typeof msg !== 'object' || !msg.type) return;
+
+  // 页面里的 Alt+T 兜底（见 requestPageToggle 的注释）：内容脚本只报告「按了」，翻哪一页由
+  // 这里决定，和命令那条路走同一段逻辑。
+  if (msg.type === 'ot-toggle-page-hotkey') {
+    const tabId = sender && sender.tab && sender.tab.id;
+    if (tabId != null) {
+      requestPageToggle(tabId);
+    } else {
+      chrome.tabs.query({ active: true, currentWindow: true }).then(([tab]) => {
+        if (tab && tab.id != null) requestPageToggle(tab.id);
+      }).catch(() => {});
+    }
+    return;
+  }
 
   if (msg.type === 'ot-fetch-image') {
     fetchImageToBase64(msg.url).then(sendResponse);
